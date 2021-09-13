@@ -1,71 +1,16 @@
-import cv2 as cv
-import numpy as np
-import math
 from collections import defaultdict
 from PIL import Image,ImageDraw,ImageFont
+import cv2 as cv
+import numpy as np
 from moviepy.editor import *
+import math
 
 from dhtmlxq import *
+from idraw import circle_corner, draw_arrow
 
-def circle_corner(img, radii):  #把原图片变成圆角，这个函数是从网上找的，原址 https://www.pyget.cn/p/185266
-	"""
-	圆角处理
-	:param img: 源图象。
-	:param radii: 半径，如：30。
-	:return: 返回蒙版。
-	"""
-	# 画圆（用于分离4个角）
-	circle = Image.new('1', (radii * 2, radii * 2), 0)  # 创建一个黑色背景的画布
-	draw = ImageDraw.Draw(circle)
-	draw.ellipse((0, 0, radii * 2, radii * 2), fill=255)  # 画白色圆形
-	# 原图
-	img = img.convert("RGBA")
-	w, h = img.size
-	# 画4个角（将整圆分离为4个部分）
-	alpha = Image.new('1', img.size, 255)
-	alpha.paste(circle.crop((0, 0, radii, radii)), (0, 0))  # 左上角
-	alpha.paste(circle.crop((radii, 0, radii * 2, radii)), (w - radii, 0))  # 右上角
-	alpha.paste(circle.crop((radii, radii, radii * 2, radii * 2)), (w - radii, h - radii))  # 右下角
-	alpha.paste(circle.crop((0, radii, radii, radii * 2)), (0, h - radii))  # 左下角
-	# alpha.show()
-	# img.putalpha(alpha)  # 白色区域透明可见，黑色区域不可见
-	return alpha
 
-def draw_arrow(draw,fr,to,fill,arrow_length=60,arrow_width=30):
-	# draw.line((x1,y1)+(x2,y2))
-	x1,y1 = fr
-	x2,y2 = to 
-	pi = math.pi
-
-	length = math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
-
-	if x1!=x2:
-		if y1==y2:
-			if x2>x1:
-				roate = 0
-			else:
-				roate = pi
-		else:
-			roate = math.atan((y2-y1)/(x2-x1))
-	else:
-		if y2>y1:
-			roate = pi/2
-		else:
-			roate = -pi/2
-
-	p = (x2 - arrow_length*math.cos(roate),y2 - arrow_length*math.sin(roate))
-	p1 = (p[0] + arrow_width//2*math.cos(roate+pi/2),p[1] + arrow_width//2*math.sin(roate+pi/2))
-	p11 = (p[0] + arrow_width//4*math.cos(roate+pi/2),p[1] + arrow_width//4*math.sin(roate+pi/2))
-
-	p2 = (p[0] + arrow_width//2*math.cos(roate-pi/2),p[1] + arrow_width//2*math.sin(roate-pi/2))
-	p22 = (p[0] + arrow_width//4*math.cos(roate-pi/2),p[1] + arrow_width//4*math.sin(roate-pi/2))
-	draw.polygon([fr,p11,p1,to,p2,p22],fill= fill)
-	draw.point(fr)
-# img = Image.new('RGB',(1920,1080),'black')
-# draw = ImageDraw.Draw(img)
-# draw_arrow(draw,100,100,800,800)
-
-# img.show()
+RED_CHESSMAN   = "車馬相仕帅砲兵"
+BLACK_CHESSMAN = "车马象士将炮兵"
 
 
 def pgn_reader(fp):
@@ -85,7 +30,7 @@ def pgn_reader(fp):
 			else:
 				try:
 					n,r,b = line.strip().split()
-					print(line)
+					# print(line)
 					steps.append((int(n[0]),r,b))
 				except:
 					n,r = line.strip().split()
@@ -93,7 +38,7 @@ def pgn_reader(fp):
 	return info,steps
 
 
-def fen_parser(fen):
+def fen2txt(fen):
 	"""读取fen文件，返回局面字符串"""
 	fen = fen.split()[0]
 	trans = {'k':'将','a':'士','b':'象','n':'马','r':'车','p':'卒','c':'炮',
@@ -118,6 +63,10 @@ def txt2board(txt):
 		for j, piece in enumerate(line.strip()):
 			board[i][j] = piece
 	return board
+
+
+def fen2board(fen):
+	return txt2board(fen2txt(fen))
 
 
 def board2txt(board):
@@ -149,8 +98,7 @@ def parse_step(step,board):
 
 
 def _isred(chessman):
-	# 红棋符合
-	return chessman in "車馬相仕帅砲兵"
+	return chessman in RED_CHESSMAN
 
 def _chinese_num(num):
 	# 大写数字
@@ -500,7 +448,7 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 	down_r = Image.open('src/img/download/DH_bg_down_r.png').convert('RGBA')
 	new_screen.paste(down_r,(1920-down_r.width,1080-down_r.height),mask=down_r)
 
-	draw.text((1510,1035),'arry_lee',font=comment_font)
+	draw.text((1510,1035),'棋雀',font=comment_font)
 	# 绘制评论
 	if comment:
 		# draw.text((vlines[3],th-comment_font_size//2),comment,font=comment_font)
@@ -569,10 +517,10 @@ def pgn2gif(pgn,out_file,flip=False,blind=False):
 			durations = [47/(le-1)]*le
 		else:
 			durations = [47/le]*le
-		ad = AudioFileClip('E:/00IT/P/棋雀/src/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(47)
+		ad = AudioFileClip('E:/00IT/P/chesssparrow/src/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(47)
 	else:
 		durations = [1]*le
-		ad = AudioFileClip('E:/00IT/P/棋雀/src/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(le)
+		ad = AudioFileClip('E:/00IT/P/chesssparrow/src/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(le)
 	clip = ImageSequenceClip(images_list,durations=durations)
 	a = clip.set_audio(ad)
 	a.write_videofile(out_file,fps=10)
@@ -661,10 +609,149 @@ def ubb2gif(ubb,out_file):
 	out.release()
 	return frame
 
-# (fv,fh)+(tv,th)
 
 
 
+
+
+class Board(object):
+	def __init__(self,fen):
+		if len(fen)>60:
+			self.board = txt2board(fen)
+		else:
+			self.board = fen2board(fen)
+		self.direction = 1
+
+	def flip(self):
+		self.direction = - self.direction
+		new_board = []
+		for l in reversed(self.board):
+			new_board.append(list(reversed(l)))
+		self.board = new_board
+
+	def to_string(self):
+		return '\n'.join(''.join(line) for line in board)
+
+	def __str__(self):
+		return self.to_string()
+
+
+	def to_image(self,bg_color=(118,37,47), size=(1920,1080)):
+		board_image = Image.new('RGB',size,bg_color)
+		draw = ImageDraw.Draw(board_image)
+		hlines =  sorted(list(range(484,0,-105))+list(range(593,1080,105)))
+		vlines = sorted(list(set(list(range(960,0,-105))+list(range(960,1920,105)))))
+
+		for i in hlines:
+			draw.line((vlines[5],i)+(vlines[13],i),fill='white',width=3)
+
+		for i in vlines[5:14]:
+			draw.line((i,hlines[0])+(i,hlines[4]),fill='white',width=3)
+
+		for i in vlines[5:14]:
+			draw.line((i,hlines[5])+(i,hlines[-1]),fill='white',width=3)
+
+		def snow(x,y,d=8,l=16):
+			draw.line((x+d,y+d)+(x+d,y+d+l),width=1)
+			draw.line((x+d,y+d)+(x+d+l,y+d),width=1)
+
+			draw.line((x-d+1,y-d+1)+(x-d+1,y-d+1-l),width=1)
+			draw.line((x-d+1,y-d+1)+(x-d+1-l,y-d+1),width=1)
+
+			draw.line((x-d+1,y+d)+(x-d+1,y+d+l),width=1)
+			draw.line((x-d+1,y+d)+(x-d+1-l,y+d),width=1)
+
+			draw.line((x+d,y-d+1)+(x+d,y-d+1-l),width=1)
+			draw.line((x+d,y-d+1)+(x+d+l,y-d+1),width=1)
+
+		def lsnow(x,y,d=8,l=16):
+			draw.line((x-d+1,y-d+1)+(x-d+1,y-d+1-l),width=1)
+			draw.line((x-d+1,y-d+1)+(x-d+1-l,y-d+1),width=1)
+
+			draw.line((x-d+1,y+d)+(x-d+1,y+d+l),width=1)
+			draw.line((x-d+1,y+d)+(x-d+1-l,y+d),width=1)
+
+		def rsnow(x,y,d=8,l=16):
+			draw.line((x+d,y+d)+(x+d,y+d+l),width=1)
+			draw.line((x+d,y+d)+(x+d+l,y+d),width=1)
+
+			draw.line((x+d,y-d+1)+(x+d,y-d+1-l),width=1)
+			draw.line((x+d,y-d+1)+(x+d+l,y-d+1),width=1)
+
+		rsnow(vlines[5],hlines[3])
+
+		snow(vlines[7],hlines[3])
+		snow(vlines[9],hlines[3])
+		snow(vlines[11],hlines[3])
+		lsnow(vlines[13],hlines[3])
+		snow(vlines[6],hlines[2])
+		snow(vlines[12],hlines[2])
+
+		rsnow(vlines[5],hlines[-4])
+		snow(vlines[7],hlines[-4])
+		snow(vlines[9],hlines[-4])
+		snow(vlines[11],hlines[-4])
+		lsnow(vlines[13],hlines[-4])
+		snow(vlines[6],hlines[-3])
+		snow(vlines[12],hlines[-3])
+
+		draw.line((vlines[5],hlines[4])+(vlines[5],hlines[5]),fill='white',width=3)
+		draw.line((vlines[13],hlines[4])+(vlines[13],hlines[5]),fill='white',width=3)
+
+		draw.line((vlines[8],hlines[0])+(vlines[10],hlines[2]),fill='white',width=2)
+		draw.line((vlines[8],hlines[2])+(vlines[10],hlines[0]),fill='white',width=2)
+
+		draw.line((vlines[8],hlines[-1])+(vlines[10],hlines[-3]),fill='white',width=2)
+		draw.line((vlines[8],hlines[-3])+(vlines[10],hlines[-1]),fill='white',width=2)
+
+		fontsize = 70
+		font = ImageFont.truetype("src/font/李旭科书法.ttf", fontsize,encoding='gb')
+		draw.text((vlines[6],hlines[4]+18), '楚河〇〇〇〇〇汉界' , font=font)
+
+		
+		draw.rectangle((vlines[5]-15,hlines[0]-15)+(vlines[13]+15,hlines[-1]+15),width=4,outline='white')
+		draw.rectangle((vlines[5]-60,hlines[0]-60)+(vlines[13]+60,hlines[-1]+60),width=1)
+			
+		board = [[(v,h) for v in vlines[5:5+9]] for h in hlines[0:10]]
+
+		for i in range(9):
+			for j in range(10):
+				v,h = board[j][i]
+				p = self.board[j][i]
+
+				if p in '車馬相仕帅炮兵':
+					color = '#82111f'
+					bg_color = 'white'
+				else:
+					color = 'white'
+					bg_color = 'black'
+
+				if p != '〇':
+					chessman_folder='src/img/chess/'
+					chess = Image.open(chessman_folder + p + '.png')
+					w = 120
+					chess = chess.resize((w,w))
+					board_image.paste(chess,(v-w//2,h-w//2)+(v+w//2,h+w//2),mask=chess)
+
+		# top_l = Image.open('src/img/download/DH_bg_top_l.png').convert('RGBA')
+		# board_image.paste(top_l,(0,0),mask=top_l)
+		# top_r = Image.open('src/img/download/DH_bg_top_r.png').convert('RGBA')
+		# board_image.paste(top_r,(1920-top_r.width,0),mask=top_r)
+
+		# top_lu = Image.open('src/img/download/DH_bg_top_lu.png').convert('RGBA')
+		# board_image.paste(top_lu,(1920-top_lu.width-200,0),mask=top_lu)
+
+		# down_l = Image.open('src/img/download/DH_bg_down_l.png').convert('RGBA')
+		# board_image.paste(down_l,(0,1080-down_l.height),mask=down_l)
+
+		# down_r = Image.open('src/img/download/DH_bg_down_r.png').convert('RGBA')
+		# board_image.paste(down_r,(1920-down_r.width,1080-down_r.height),mask=down_r)
+
+		return board_image
+
+	def show(self):
+		self.board_image = self.to_image()
+		self.board_image.show()
 
 
 if __name__ == '__main__':
@@ -681,12 +768,16 @@ if __name__ == '__main__':
 	〇〇〇〇〇〇〇〇〇
 	車馬相仕帅仕相馬車
 	"""
+
+	b = Board(s)
+	b.flip()
+	b.show()
 	# ubb2gif('md.ubb','md.mp4')
 	# b = '7999999949999999699977999985523140994299509999999999991738475899'
 	# print(binit2board(b))
 	# board2pic(binit2board(b)).show()
 
-	board2pic(txt2board(s),background=False,players=None,choices=['0003','0006','0012','0050','5343','3343','4243','4443']).show()
+	# board2pic(txt2board(s),background=False,players=None,choices=['0003','0006','0012','0050','5343','3343','4243','4443']).show()
 	# from bili import comment
 
 	# import time

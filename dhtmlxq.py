@@ -1,12 +1,12 @@
-"""用于解析DHtmlXQ UBB 文件的工具
-author:arry_lee@qq.com
-
+"""用于解析DHtmlXQ UBB格式文件的工具
 """
 
 import re
 from collections import defaultdict
 from collections.abc import Iterable
 from copy import deepcopy
+
+__author__ = 'arry_lee@qq.com'
 
 
 PAT_BINIT = re.compile(r'\[DhtmlXQ_binit\](?P<binit>\d{64})\[/DhtmlXQ_binit\]')
@@ -201,17 +201,12 @@ class MoveTree(set):
         yield from helper(self.root)
 
 
+# if __name__ == '__main__':
+#     binit, movelists = parse_tree('md.ubb')
+#     tt = MoveTree(movelists,board=binit)
+#     tt.compress()
 
-
-
-
-
-if __name__ == '__main__':
-    binit, movelists = parse_tree('md.ubb')
-    tt = MoveTree(movelists,board=binit)
-    tt.compress()
-
-    for v in tt.video_generator():
-        print(v)
+#     for v in tt.video_generator():
+#         print(v)
 
     
