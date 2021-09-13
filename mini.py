@@ -1,17 +1,18 @@
-"""控制小程序窗口"""
+"""控制天天象棋的微信小程序电脑端窗口
+get_pgn 用于导出 pgn 文件
+"""
 
-from pygetwindow import getWindowsWithTitle
-import pyautogui
+import os
 import time
 from PIL import Image
 import cv2 as cv
 import numpy as np
-
-import os
 import pyautogui
 from pygetwindow import getWindowsWithTitle
 
+# 小程序登录器路径
 WECHATAPPLAUNCHERPATH = "D:\\Program Files (x86)\\Tencent\\WeChat\\WechatAppLauncher.exe"
+
 
 class Mini(object):
 	"""模拟微信小程序的行为"""
@@ -72,23 +73,20 @@ def pic2move(image):
 	board_box =(5,160,320,505)
 	vlines = "ABCDEFGHI"
 	# 模板找图找到落点---------------------------------
-	fp = image.crop(board_box)
-	to = pyautogui.locate('src/to.png',fp,confidence=0.8)
-	tx,ty = (to.left-16)//34,to.top//34
-	TO = vlines[tx],str(9-ty)
+	board_image = image.crop(board_box)
+	to = pyautogui.locate('static/template/to.png',board_image,confidence=0.8)
+	tx, ty = (to.left-16)//34, to.top//34
+	TO = vlines[tx], str(9-ty)
 
-	
 	# 找圆法找到落点---------------------------------
-	fp = fp.convert('L')
-	binary = fp.point(lambda i: 255 if i>225 else 0)
+	board_image = board_image.convert('L')
+	binary = board_image.point(lambda i: 255 if i>225 else 0)
 	binary = np.asarray(binary)
 	# 调参
 	board_circle = cv.HoughCircles(binary,cv.HOUGH_GRADIENT,1,10,
 				 param1=50,param2=8,minRadius=2,maxRadius=5)
-	print(board_circle)
-	cv.imshow('',binary)
-	# cv.waitKey(0)
-
+	# print(board_circle)
+	# cv.imshow('',binary)
 
 	circles = np.uint32(np.around(board_circle))
 
@@ -114,7 +112,7 @@ def get_pgn(fp):
 	while True:
 		if s.getpixel(checkpoint) == (209,206,203):
 			pyautogui.click(next_)
-			time.sleep(2)
+			time.sleep(2) # 为了防止将军动画的影响，2s走一步
 		else:
 			break
 		s = pyautogui.screenshot(region=a.box)
@@ -132,4 +130,4 @@ def get_pgn(fp):
 	return b
 
 if __name__ == '__main__':
-	get_pgn('src/pgn/2.pgn')
+	get_pgn('static/pgn/2.pgn')
