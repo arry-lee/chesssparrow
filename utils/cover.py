@@ -142,9 +142,9 @@ def ccrop():
 
 
 
-import glob 
+# import glob 
 
-for i in glob.glob('E:/00IT/P/chesssparrow/src/img/heibai/*png'):
-	a = Image.open(i).resize((60,60))
-	name = i.split('.')[0]+'60.png'
-	a.save(name)
+# for i in glob.glob('E:/00IT/P/chesssparrow/src/img/heibai/*png'):
+# 	a = Image.open(i).resize((60,60))
+# 	name = i.split('.')[0]+'60.png'
+# 	a.save(name)

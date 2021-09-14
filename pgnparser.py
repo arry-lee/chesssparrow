@@ -10,7 +10,7 @@ from idraw import circle_corner, draw_arrow
 
 
 RED_CHESSMAN   = "車馬相仕帅砲兵"
-BLACK_CHESSMAN = "车马象士将炮兵"
+BLACK_CHESSMAN = "车马象士将炮卒"
 
 
 def pgn_reader(fp):
@@ -211,7 +211,7 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 			pass
 
 	if background:
-		boardpic = Image.open('src/img_chessboard_11.png')
+		boardpic = Image.open('static/img_chessboard_11.png')
 		w,h = boardpic.size
 		new_screen.paste(boardpic,(1920//2-w//2+3,0))
 
@@ -291,14 +291,14 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 		draw.line((vlines[8],hlines[-3])+(vlines[10],hlines[-1]),fill='white',width=2)
 
 		fontsize = 70
-		font = ImageFont.truetype("src/font/李旭科书法.ttf", fontsize,encoding='gb')
+		font = ImageFont.truetype("static/font/李旭科书法.ttf", fontsize,encoding='gb')
 		draw.text((vlines[6],hlines[4]+18), '楚河〇〇〇〇〇汉界' , font=font)
 
 		
 		draw.rectangle((vlines[5]-15,hlines[0]-15)+(vlines[13]+15,hlines[-1]+15),width=4,outline='white')
-		t = new_screen.crop((vlines[5]-60,hlines[0]-60,vlines[13]+60,hlines[-1]+60))
+		# t = new_screen.crop((vlines[5]-60,hlines[0]-60,vlines[13]+60,hlines[-1]+60))
 		
-		t.save('qp.png')
+		# t.save('qp.png')
 
 		draw.rectangle((vlines[5]-60,hlines[0]-60)+(vlines[13]+60,hlines[-1]+60),width=1)
 		
@@ -308,11 +308,11 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 
 	# 头像框
 	hvhe_font_size = 40
-	hvhe_font = ImageFont.truetype("src/font/msyh.ttc", hvhe_font_size,encoding='gb')
+	hvhe_font = ImageFont.truetype("static/font/msyh.ttc", hvhe_font_size,encoding='gb')
 
 	if players is not None: # 如果没有对局双方信息
-		red_tou = Image.open('src/wang_tian_yi.jpg').resize((220,220))
-		black_tou = Image.open('src/zheng_wei_tong.jpg').resize((220,220))
+		red_tou = Image.open('static/wang_tian_yi.jpg').resize((220,220))
+		black_tou = Image.open('static/zheng_wei_tong.jpg').resize((220,220))
 		delta = 0
 		xdelta = 10
 		new_screen.paste(black_tou,(vlines[1]+xdelta,hlines[6]+delta),mask=circle_corner(black_tou,110))
@@ -327,9 +327,9 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 	board = [[(v,h) for v in vlines[5:5+9]] for h in hlines[0:10]]
 
 	comment_font_size = 30
-	comment_font = ImageFont.truetype("src/font/FZKT.TTF", comment_font_size,encoding='gb')
+	comment_font = ImageFont.truetype("static/font/FZKT.TTF", comment_font_size,encoding='gb')
 	zimu_fontsize = 24
-	zimu_font = ImageFont.truetype("src/font/msyh.ttc", zimu_fontsize,encoding='gb')
+	zimu_font = ImageFont.truetype("static/font/msyh.ttc", zimu_fontsize,encoding='gb')
 	# 绘制棋子动线
 	if fr and to:
 		if not flip:
@@ -371,9 +371,9 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 				# draw.text((v-fontsize//2,h-fontsize//2), p , font=font,fill=color)
 
 				if blind == True:
-					chess = Image.open('src/img/chess/〇.png')
+					chess = Image.open('static/img/chess/〇.png')
 				else:
-					chessman_folder='src/img/chess/'
+					chessman_folder='static/img/chess/'
 					chess = Image.open(chessman_folder + p + '.png')
 				w = 120
 				chess = chess.resize((w,w))
@@ -431,21 +431,21 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 			draw.text(p,str(i+1),font=zimu_font,anchor='mm',fill='white')
 			
 	# 绘制前景
-	# que = Image.open('src/que.png')
+	# que = Image.open('static/que.png')
 	# new_screen.paste(que,(vlines[16],0))
 
-	top_l = Image.open('src/img/download/DH_bg_top_l.png').convert('RGBA')
+	top_l = Image.open('static/img/download/DH_bg_top_l.png').convert('RGBA')
 	new_screen.paste(top_l,(0,0),mask=top_l)
-	top_r = Image.open('src/img/download/DH_bg_top_r.png').convert('RGBA')
+	top_r = Image.open('static/img/download/DH_bg_top_r.png').convert('RGBA')
 	new_screen.paste(top_r,(1920-top_r.width,0),mask=top_r)
 
-	top_lu = Image.open('src/img/download/DH_bg_top_lu.png').convert('RGBA')
+	top_lu = Image.open('static/img/download/DH_bg_top_lu.png').convert('RGBA')
 	new_screen.paste(top_lu,(1920-top_lu.width-200,0),mask=top_lu)
 
-	down_l = Image.open('src/img/download/DH_bg_down_l.png').convert('RGBA')
+	down_l = Image.open('static/img/download/DH_bg_down_l.png').convert('RGBA')
 	new_screen.paste(down_l,(0,1080-down_l.height),mask=down_l)
 
-	down_r = Image.open('src/img/download/DH_bg_down_r.png').convert('RGBA')
+	down_r = Image.open('static/img/download/DH_bg_down_r.png').convert('RGBA')
 	new_screen.paste(down_r,(1920-down_r.width,1080-down_r.height),mask=down_r)
 
 	draw.text((1510,1035),'棋雀',font=comment_font)
@@ -454,10 +454,10 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 		# draw.text((vlines[3],th-comment_font_size//2),comment,font=comment_font)
 		draw.text((vlines[9],hlines[8]),comment,font=zimu_font,anchor='mb',fill='white',stroke_width=3,stroke_fill='black')
 
-	# hvhe = Image.open('src/img/download/DH_round_slot.png').convert('RGBA')
+	# hvhe = Image.open('static/img/download/DH_round_slot.png').convert('RGBA')
 	# new_screen.paste(hvhe,(vlines[15],1080//2-hvhe.height//2),mask=hvhe)
 
-	# hvhe1 = Image.open('src/img/download/DH_step_slot.png').convert('RGBA')
+	# hvhe1 = Image.open('static/img/download/DH_step_slot.png').convert('RGBA')
 	# new_screen.paste(hvhe1,(vlines[15]+hvhe.width,1080//2-hvhe.height//2),mask=hvhe1)
 
 	
@@ -468,7 +468,7 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 	return new_screen
 
 
-def pgn2gif(pgn,out_file,flip=False,blind=False):
+def pgn2gif(pgn,out_file,flip=False,blind=False,tail=True):
 	s = \
 	"""
 	车马象士将士象马车
@@ -503,12 +503,6 @@ def pgn2gif(pgn,out_file,flip=False,blind=False):
 
 	frame.append(board2pic(board,flip=flip,blind=blind))
 
-	# cv 写视频文件大
-	# fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')
-	# out = cv.VideoWriter(out_file,fourcc, 1, (1920,1080),True)
-	# for f in frame:
-	# 	out.write(cv.cvtColor(np.array(f),cv.COLOR_RGB2BGR))
-	# out.release()
 
 	images_list = [np.array(f) for f in frame]
 	le = len(images_list)
@@ -517,15 +511,20 @@ def pgn2gif(pgn,out_file,flip=False,blind=False):
 			durations = [47/(le-1)]*le
 		else:
 			durations = [47/le]*le
-		ad = AudioFileClip('E:/00IT/P/chesssparrow/src/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(47)
+		ad = AudioFileClip('E:/00IT/P/chesssparrow/static/music/bgm.mp3',fps = 44100).set_start(0).set_duration(47)
 	else:
 		durations = [1]*le
-		ad = AudioFileClip('E:/00IT/P/chesssparrow/src/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(le)
+		ad = AudioFileClip('E:/00IT/P/chesssparrow/static/music/bgm.mp3',fps = 44100).set_start(0).set_duration(le)
 	clip = ImageSequenceClip(images_list,durations=durations)
 	a = clip.set_audio(ad)
+
+	if tail is True:
+		tc = VideoFileClip('E:/00IT/P/chesssparrow/static/video/tail/qique_tail.mp4')
+		a = concatenate_videoclips([a,tc])
+	
 	a.write_videofile(out_file,fps=10)
 
-	return frame
+	return a
 
 
 def pgn2txt(pgn,flip=False):
@@ -705,7 +704,7 @@ class Board(object):
 		draw.line((vlines[8],hlines[-3])+(vlines[10],hlines[-1]),fill='white',width=2)
 
 		fontsize = 70
-		font = ImageFont.truetype("src/font/李旭科书法.ttf", fontsize,encoding='gb')
+		font = ImageFont.truetype("static/font/李旭科书法.ttf", fontsize,encoding='gb')
 		draw.text((vlines[6],hlines[4]+18), '楚河〇〇〇〇〇汉界' , font=font)
 
 		
@@ -727,24 +726,24 @@ class Board(object):
 					bg_color = 'black'
 
 				if p != '〇':
-					chessman_folder='src/img/chess/'
+					chessman_folder='static/img/chess/'
 					chess = Image.open(chessman_folder + p + '.png')
 					w = 120
 					chess = chess.resize((w,w))
 					board_image.paste(chess,(v-w//2,h-w//2)+(v+w//2,h+w//2),mask=chess)
 
-		# top_l = Image.open('src/img/download/DH_bg_top_l.png').convert('RGBA')
+		# top_l = Image.open('static/img/download/DH_bg_top_l.png').convert('RGBA')
 		# board_image.paste(top_l,(0,0),mask=top_l)
-		# top_r = Image.open('src/img/download/DH_bg_top_r.png').convert('RGBA')
+		# top_r = Image.open('static/img/download/DH_bg_top_r.png').convert('RGBA')
 		# board_image.paste(top_r,(1920-top_r.width,0),mask=top_r)
 
-		# top_lu = Image.open('src/img/download/DH_bg_top_lu.png').convert('RGBA')
+		# top_lu = Image.open('static/img/download/DH_bg_top_lu.png').convert('RGBA')
 		# board_image.paste(top_lu,(1920-top_lu.width-200,0),mask=top_lu)
 
-		# down_l = Image.open('src/img/download/DH_bg_down_l.png').convert('RGBA')
+		# down_l = Image.open('static/img/download/DH_bg_down_l.png').convert('RGBA')
 		# board_image.paste(down_l,(0,1080-down_l.height),mask=down_l)
 
-		# down_r = Image.open('src/img/download/DH_bg_down_r.png').convert('RGBA')
+		# down_r = Image.open('static/img/download/DH_bg_down_r.png').convert('RGBA')
 		# board_image.paste(down_r,(1920-down_r.width,1080-down_r.height),mask=down_r)
 
 		return board_image
@@ -781,7 +780,7 @@ if __name__ == '__main__':
 	# from bili import comment
 
 	# import time
-	# frame =pgn2txt('src/pgn/5.pgn')
+	# frame =pgn2txt('static/pgn/5.pgn')
 	# frame.reverse()
 
 	# for f in frame[1:]:
@@ -789,12 +788,12 @@ if __name__ == '__main__':
 	# 	print(f)
 	# 	time.sleep(1)
 
-	# with open('src/pgn/wty.txt','w',encoding='utf-8') as f:
+	# with open('static/pgn/wty.txt','w',encoding='utf-8') as f:
 	# 	for t in frame:
 	# 		f.write(t)
 	# 		f.write('\n\n')
 
-	# lst = pgn2gif('src/pgn/4.pgn','src/video/4.mp4',flip=False)
+	# lst = pgn2gif('static/pgn/4.pgn','static/video/4.mp4',flip=False)
 	# images_list = [np.array(f) for f in lst]
 	# beat_times = np.array([   0,   520,   984,  1460,  1925,  2389,  2854,  3309,  3782,  4247,
 	#   4711,  5175,  5626,  6104,  6947,  7280,  7486,  7961,  8415,  8880,
@@ -830,7 +829,7 @@ if __name__ == '__main__':
 
 	
 
-	# ad = AudioFileClip('E:/00IT/P/棋雀/src/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(47)
+	# ad = AudioFileClip('E:/00IT/P/棋雀/static/bgm/bgm.mp3',fps = 44100).set_start(0).set_duration(47)
 	# clip = ImageSequenceClip(images_list,durations=durations)
 	
 	# a = clip.set_audio(ad)
