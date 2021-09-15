@@ -326,10 +326,10 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 
 	board = [[(v,h) for v in vlines[5:5+9]] for h in hlines[0:10]]
 
-	comment_font_size = 30
+	comment_font_size = 36
 	comment_font = ImageFont.truetype("static/font/FZKT.TTF", comment_font_size,encoding='gb')
-	zimu_fontsize = 24
-	zimu_font = ImageFont.truetype("static/font/msyh.ttc", zimu_fontsize,encoding='gb')
+	logo_fontsize = 26
+	logo_font = ImageFont.truetype("static/font/FZKT.TTF", logo_fontsize,encoding='gb')
 	# 绘制棋子动线
 	if fr and to:
 		if not flip:
@@ -427,15 +427,13 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 					roate = -pi/2
 
 			p = (x2 - 60*math.cos(roate),y2 - 60*math.sin(roate))
-			box = (tv//2+fv//2-zimu_fontsize//2,th//2+fh//2-zimu_fontsize//2,tv//2+fv//2+zimu_fontsize//2,th//2+fh//2+zimu_fontsize//2)
-			draw.text(p,str(i+1),font=zimu_font,anchor='mm',fill='white')
+			box = (tv//2+fv//2-logo_fontsize//2,th//2+fh//2-logo_fontsize//2,tv//2+fv//2+logo_fontsize//2,th//2+fh//2+logo_fontsize//2)
+			draw.text(p,str(i+1),font=logo_font,anchor='mm',fill='white')
 			
 	# 绘制前景
-	# que = Image.open('static/que.png')
-	# new_screen.paste(que,(vlines[16],0))
 
 	top_l = Image.open('static/img/download/DH_bg_top_l.png').convert('RGBA')
-	new_screen.paste(top_l,(0,0),mask=top_l)
+	new_screen.paste(top_l,(-80,0),mask=top_l)
 	top_r = Image.open('static/img/download/DH_bg_top_r.png').convert('RGBA')
 	new_screen.paste(top_r,(1920-top_r.width,0),mask=top_r)
 
@@ -443,16 +441,16 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 	new_screen.paste(top_lu,(1920-top_lu.width-200,0),mask=top_lu)
 
 	down_l = Image.open('static/img/download/DH_bg_down_l.png').convert('RGBA')
-	new_screen.paste(down_l,(0,1080-down_l.height),mask=down_l)
+	new_screen.paste(down_l,(0,1080-down_l.height+25),mask=down_l)
 
 	down_r = Image.open('static/img/download/DH_bg_down_r.png').convert('RGBA')
 	new_screen.paste(down_r,(1920-down_r.width,1080-down_r.height),mask=down_r)
 
-	draw.text((1510,1035),'棋雀',font=comment_font)
+	draw.text((1510,1035),'棋雀出品',font=logo_font)
 	# 绘制评论
 	if comment:
-		# draw.text((vlines[3],th-comment_font_size//2),comment,font=comment_font)
-		draw.text((vlines[9],hlines[8]),comment,font=zimu_font,anchor='mb',fill='white',stroke_width=3,stroke_fill='black')
+		draw.text((vlines[3],th-comment_font_size//2),comment,font=comment_font)
+		# draw.text((vlines[9],hlines[8]),comment,font=comment_font,anchor='mb',fill='white',stroke_width=3,stroke_fill='black')
 
 	# hvhe = Image.open('static/img/download/DH_round_slot.png').convert('RGBA')
 	# new_screen.paste(hvhe,(vlines[15],1080//2-hvhe.height//2),mask=hvhe)
@@ -461,7 +459,7 @@ def board2pic(b,players = None,bg_color=(118,37,47),
 	# new_screen.paste(hvhe1,(vlines[15]+hvhe.width,1080//2-hvhe.height//2),mask=hvhe1)
 
 	
-	# draw.text((vlines[9],hlines[8]),'炮二平五',font=zimu_font,anchor='mb',fill='white',stroke_width=3,stroke_fill='black')
+	# draw.text((vlines[9],hlines[8]),'炮二平五',font=logo_font,anchor='mb',fill='white',stroke_width=3,stroke_fill='black')
 	# draw.text((vlines[9],hlines[1]),'马8进7',font=zimu_font,anchor='mt',fill='white',stroke_width=3,stroke_fill='black')
 
 
@@ -768,15 +766,15 @@ if __name__ == '__main__':
 	車馬相仕帅仕相馬車
 	"""
 
-	b = Board(s)
-	b.flip()
-	b.show()
+	# b = Board(s)
+	# b.flip()
+	# b.show()
 	# ubb2gif('md.ubb','md.mp4')
 	# b = '7999999949999999699977999985523140994299509999999999991738475899'
 	# print(binit2board(b))
 	# board2pic(binit2board(b)).show()
 
-	# board2pic(txt2board(s),background=False,players=None,choices=['0003','0006','0012','0050','5343','3343','4243','4443']).show()
+	board2pic(txt2board(s),background=False,players=None).show()
 	# from bili import comment
 
 	# import time
